@@ -10,5 +10,5 @@ app = FastAPI()
 @app.post("/chat")
 async def chat(item: Item) -> dict[str, str]:
     """Endpoint to handle chat requests."""
-    response = await run_agent(item.message)
+    response = await run_agent(item.message, {"configurable": {"thread_id": "1"}})
     return {"response": response}

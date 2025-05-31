@@ -1,5 +1,6 @@
 # %%
 from langgraph.prebuilt import create_react_agent
+from langgraph.checkpoint.memory import InMemorySaver
 
 from langchain.chat_models import init_chat_model
 
@@ -21,13 +22,13 @@ tools = [search_tool]
 agent = create_react_agent(
     llm,
     tools=tools,
+    checkpointer=InMemorySaver(),
 )
 
 # display(Image(agent.get_graph().draw_mermaid_png()))
 # %%
 
-async def run_agent(query: str) -> str:
+async def run_agent(query: str, config: dict) -> str:
     """Run the agent with the given query."""
-    response = await agent.ainvoke({"messages": [{"role": "user", "content": query}]})
+    response = await agent.ainvoke({"messages": [{"role": "user", "content": query}]}, config=config)
     return response.get("messages", [{}])[-1].content
-    # return response
