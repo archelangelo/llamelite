@@ -1,0 +1,9 @@
+version: "3.9"
+services:
+  llame:
+    build: .
+    env_file: .env
+    ports:
+      - "8080:80"
+    # If you use entrypoint.sh, uncomment the next line:
+    # entrypoint: ["/entrypoint.sh"]
