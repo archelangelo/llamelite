@@ -5,5 +5,17 @@ services:
     env_file: .env
     ports:
       - "8080:80"
-    # If you use entrypoint.sh, uncomment the next line:
-    # entrypoint: ["/entrypoint.sh"]
+  postgres:
+    image: postgres:16
+    restart: always
+    environment:
+      POSTGRES_DB: llamedb
+      POSTGRES_USER: llame
+      POSTGRES_PASSWORD: llamapass
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
