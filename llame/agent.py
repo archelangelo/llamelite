@@ -3,6 +3,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from langgraph.prebuilt import create_react_agent
 from langgraph.checkpoint.postgres.aio import AsyncPostgresSaver
+from langgraph.store.postgres.aio import AsyncPostgresStore
 from langchain.chat_models import init_chat_model
 from langchain_tavily import TavilySearch
 
@@ -25,12 +26,17 @@ async def agent_lifespan(app: FastAPI):
     # If AsyncPostgresSaver needs async setup, do it here
     # checkpointer = await AsyncPostgresSaver(DB_URL).setup()
 
-    async with AsyncPostgresSaver.from_conn_string(DB_URL) as checkpointer:
+    async with (
+        AsyncPostgresSaver.from_conn_string(DB_URL) as checkpointer,
+        AsyncPostgresStore.from_conn_string(DB_URL) as store,
+        ):
         await checkpointer.setup()
+        await store.setup()
         agent = create_react_agent(
             llm,
             tools=tools,
             checkpointer=checkpointer,
+            store=store,
         )
         yield
 
